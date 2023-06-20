@@ -1,7 +1,7 @@
-import streamlit as st
-import openai
 import os
-source /home/appuser/venv/bin/activate
+import requests
+import streamlit as st
+
 def read_ingredients(file_name):
     try:
         with open(file_name, 'r') as file:
@@ -20,16 +20,20 @@ def generate_recipes_prompt(ingredients, cuisine):
 
 def retrieve_recipes(prompt):
     api_key = os.getenv('OPENAI_API_KEY')
-    openai.api_key = api_key
-    response = openai.Completion.create(
-        engine='text-davinci-003',
-        prompt=prompt,
-        max_tokens=500,
-        n=1,  # Number of recipes to generate
-        stop=None,
-        temperature=0.1
-    )
-    recipes = [choice['text'].strip() for choice in response.choices]
+    endpoint = "https://api.openai.com/v1/engines/text-davinci-003/completions"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+    data = {
+        "prompt": prompt,
+        "max_tokens": 500,
+        "n": 1,
+        "stop": None,
+        "temperature": 0.1
+    }
+    response = requests.post(endpoint, json=data, headers=headers)
+    recipes = [choice['text'].strip() for choice in response.json()["choices"]]
     return recipes
 
 def print_recipes(recipes):
@@ -50,19 +54,19 @@ def main():
     os.environ['OPENAI_API_KEY'] = api_key
 
     file_name = st.text_input("Enter the file name containing the list of ingredients:")
-    
+
     ingredients = read_ingredients(file_name)
-    
+
     if ingredients:
         cuisine = st.text_input("Enter the cuisine choice:")
-        
+
         with st.form("generate_form"):
             if st.form_submit_button("Find Recipes"):
                 prompt = generate_recipes_prompt(ingredients, cuisine)
-                
+
                 with st.spinner("Generating recipes..."):
                     recipes = retrieve_recipes(prompt)
-                
+
                 st.success("Recipes generated successfully!")
                 print_recipes(recipes)
             else:
