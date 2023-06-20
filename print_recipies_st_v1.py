@@ -1,4 +1,4 @@
-import os
+mport os
 import requests
 import streamlit as st
 
@@ -56,7 +56,7 @@ def main():
     file_name = st.text_input("Enter the file name containing the list of ingredients:")
 
     ingredients = read_ingredients(file_name)
-    
+
     if ingredients:
         cuisine = st.text_input("Enter the cuisine choice:")
 
