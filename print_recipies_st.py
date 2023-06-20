@@ -1,5 +1,6 @@
 import streamlit as st
 import openai
+import os
 
 def read_ingredients(file_name):
     try:
@@ -18,7 +19,8 @@ def generate_recipes_prompt(ingredients, cuisine):
     return prompt
 
 def retrieve_recipes(prompt):
-    openai.api_key = get_openai_key()  # Get the API key from the stored file
+    api_key = os.getenv('OPENAI_API_KEY')
+    openai.api_key = api_key
     response = openai.Completion.create(
         engine='text-davinci-003',
         prompt=prompt,
@@ -40,13 +42,13 @@ def print_recipes(recipes):
             st.write(recipe)
             st.write("---")
 
-def get_openai_key():
-    with open("api_key.txt", "r") as file:
-        api_key = file.read().strip()
-    return api_key
-
 def main():
     st.title("Recipe Generator")
+
+    # Ask for the API key and save it as an environment variable
+    api_key = st.text_input("Enter your OpenAI API key:")
+    os.environ['OPENAI_API_KEY'] = api_key
+
     file_name = st.text_input("Enter the file name containing the list of ingredients:")
     
     ingredients = read_ingredients(file_name)
