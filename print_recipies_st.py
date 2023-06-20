@@ -1,7 +1,7 @@
 import streamlit as st
 import openai
 import os
-
+source /home/appuser/venv/bin/activate
 def read_ingredients(file_name):
     try:
         with open(file_name, 'r') as file:
