@@ -53,11 +53,12 @@ def main():
     api_key = st.text_input("Enter your OpenAI API key:")
     os.environ['OPENAI_API_KEY'] = api_key
 
-    file_name = st.text_input("Enter the file name containing the list of ingredients:")
+    file = st.file_uploader("Upload the file containing the list of ingredients:", type=["txt"])
 
-    ingredients = read_ingredients(file_name)
+    if file is not None:
+        file_contents = file.read().decode("utf-8")
+        ingredients = file_contents.splitlines()
 
-    if ingredients:
         cuisine = st.text_input("Enter the cuisine choice:")
 
         with st.form("generate_form"):
