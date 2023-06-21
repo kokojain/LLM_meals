@@ -49,6 +49,8 @@ def print_recipes(recipes, recipe_data):
                 calorie_count, is_fda_recommended = recipe_data[recipe_name]
                 st.write(f"Calories: {calorie_count}")
                 st.write(f"FDA Recommended: {is_fda_recommended}")
+            else:
+                st.write("Calorie information not available for this recipe.")
             st.write("---")
 
 def main():
