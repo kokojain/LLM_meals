@@ -36,7 +36,7 @@ def retrieve_recipes(prompt):
     recipes = [choice['text'].strip() for choice in response.json()["choices"]]
     return recipes
 
-def print_recipes(recipes):
+def print_recipes(recipes, recipe_data):
     if not recipes:
         st.write("No recipes found.")
     else:
@@ -44,6 +44,11 @@ def print_recipes(recipes):
         for i, recipe in enumerate(recipes, 1):
             st.write(f"Recipe {i}:")
             st.write(recipe)
+            recipe_name = recipe.splitlines()[0]
+            if recipe_name in recipe_data:
+                calorie_count, is_fda_recommended = recipe_data[recipe_name]
+                st.write(f"Calories: {calorie_count}")
+                st.write(f"FDA Recommended: {is_fda_recommended}")
             st.write("---")
 
 def main():
@@ -61,6 +66,13 @@ def main():
 
         cuisine = st.text_input("Enter the cuisine choice:")
 
+        # Recipe data containing calories and FDA recommendation
+        recipe_data = {
+            "Recipe 1": (500, True),
+            "Recipe 2": (700, False),
+            "Recipe 3": (600, True),
+        }
+
         with st.form("generate_form"):
             if st.form_submit_button("Find Recipes"):
                 prompt = generate_recipes_prompt(ingredients, cuisine)
@@ -69,7 +81,7 @@ def main():
                     recipes = retrieve_recipes(prompt)
 
                 st.success("Recipes generated successfully!")
-                print_recipes(recipes)
+                print_recipes(recipes, recipe_data)
             else:
                 st.info("Click 'Find Recipes' to generate recipes.")
 
