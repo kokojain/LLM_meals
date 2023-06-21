@@ -43,8 +43,8 @@ def print_recipes(recipes, recipe_data):
         st.subheader("Recipes:")
         for i, recipe in enumerate(recipes, 1):
             st.write(f"Recipe {i}:")
-            st.write(recipe)
-            recipe_name = recipe.splitlines()[0]
+            recipe_lines = recipe.splitlines()
+            recipe_name = recipe_lines[0].split(":")[0].strip()  # Extract the recipe name
             if recipe_name in recipe_data:
                 calorie_count, is_fda_recommended = recipe_data[recipe_name]
                 st.write(f"Calories: {calorie_count}")
